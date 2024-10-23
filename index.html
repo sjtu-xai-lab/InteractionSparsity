@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description"
+        content="Discovering and explaining the two-phase dynamics of a DNN learning interactions.">
+    <meta name="keywords" content="two-phase phenomenon, interactions, interaction concepts">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proving Sparsity of Interaction Primitives</title>
+    <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="./static/css/index.css">
+    <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="./static/css/bulma.min.css">
+
+
+    <script src="static/js/fontawesome.all.min.js"></script>
+    <script src="static/js/bulma-carousel.js"></script>
+    <script src="static/js/bulma-slider.js"></script>
+
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+    </script>
+    <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-MML-AM_CHTML"></script>
+
+</head>
+
+<body>
+<header>
+    <h1 class="title is-1 publication-title has-text-centered">
+        Where We Have Arrived in Proving the Emergence of Sparse Interaction Primitives in DNNs
+    </h1>
+    <p>
+        <a class="team-member" href="https://nebularaid2000.github.io/">Qihan Ren</a> &nbsp;&nbsp;&nbsp;
+        <a class="team-member" href="#">Jiayang Gao</a> &nbsp;&nbsp;&nbsp;
+        <a class="team-member" href="https://ada-shen.github.io/">Wen Shen</a> &nbsp;&nbsp;&nbsp;
+        <a class="team-member" href="http://qszhang.com/">Quanshi Zhang</a><sup>†</sup>
+    </p>
+
+    <br>
+
+    <p>
+        Shanghai Jiao Tong University
+    </p>
+
+
+    <p>(† Correspondence)</p>
+    <p>ICLR 2024 &nbsp;[<a class="team-member" href="https://openreview.net/forum?id=3pWSL8My6B">Paper</a>]
+    </p>
+
+</header>
+
+<div class="container">
+
+    <h2>Abstract</h2>
+    <div class="content has-text-justified">
+        <p>This study tries to answer the following question theoretically: <b>can the inference logic of a DNN be
+            explained as symbolic primitives?</b> Although the definition of primitives encoded by a DNN is still an open
+            problem, we follow our recent progress to mathematically formulate primitive patterns using interactions.
+            We have empirically observed the <b>emergence of sparse interaction primitives</b> in many DNNs trained for
+            various tasks, and we note that sparsity is an important characteristic of symbolic representations.
+            In this paper, we further identify three sufficient conditions for the emergence of sparse interaction
+            primitives and prove the sparsity of interactions under such conditions.
+        </p>
+
+    </div>
+
+    <hr>
+
+    <h2>Preliminary: interactions primitives</h2>
+    <div class="content has-text-justified">
+        <img src="./static/img/fig1.png" alt="Image description" style="width: 750px;">
+        <p class="img-title">
+            Fig.1: Illustration of interaction primitives.
+        </p>
+
+
+        <div class="latex">
+            A DNN does not treat each input variable (e.g., an image patch or a word) independently when conducting
+            inference, but usually encodes interactions between input variables. Given an input sample $\boldsymbol{x}$,
+            the network output $v(\boldsymbol{x})$ can be <b>decomposed into the sum of effects of all potential
+            interactions</b>. (Note that we only consider AND interactions here. Please refer to <a class="team-member" href="https://sjtu-xai-lab.github.io/InteractionDynamics/">this paper</a>
+            for a full definition of AND-OR interactions.)
+
+            $$
+            v(\boldsymbol{x})=v\left(\boldsymbol{x}_{\emptyset}\right)+\sum_{\emptyset \neq S \subseteq {N}} I (S | \boldsymbol{x}),
+            $$
+
+            where the interaction effect $I(S | \boldsymbol{x}) = \sum_{T \subseteq S}(-1)^{|S|-|T|} v\left(\boldsymbol{x}_{T}\right)$.
+
+            <br>
+
+            <ul>
+                <li>
+                    <p>
+                        <b>Complexity</b> of an interaction $S$: defined as $|S|$ (also called the <b>order</b> of an interaction)
+                    </p>
+                </li>
+
+                <li>
+                    <p>
+                        <b>Interaction primitives</b>: if $|I(S|\boldsymbol{x})|$ is large, we call it a salient
+                        <i>interaction primitive</i>; otherwise, if $|I(S|\boldsymbol{x})|$ is close to zero, we call it
+                        a <i>noisy pattern</i>.
+                    </p>
+                </li>
+
+                <li>
+                    <p>
+                        Understanding interactions as <b>AND relationships</b>: only when patches in $S$ are all present
+                        (not masked), the interaction makes a numerical effect $I(S|\boldsymbol{x})$ to the output;
+                        otherwise, the numerical effect is removed.
+                    </p>
+                </li>
+            </ul>
+
+        </div>
+
+    </div>
+
+
+
+    <hr>
+
+    <h2>Observation: sparsity of interaction primitives</h2>
+    <div class="content has-text-justified">
+        <img src="./static/img/fig2.png" alt="Image description">
+        <p class="img-title">
+            Fig. 2: The sparsity of interaction primitives is observed on different DNNs trained on various datasets.
+        </p>
+
+        <p>
+            <b>Sparsity</b> of interaction primitives means that a DNN only encodes a few salient interactions on a specific
+            sample. Only a small number of interactions have significant effects (interactions primitives), while most
+            interactions are noisy patterns.
+        </p>
+    </div>
+
+    <hr>
+
+    <h2>Proving the sparsity of interactions</h2>
+    <div class="content has-text-justified">
+<!--        <span style="font-weight: bold">Core assumptions:</span>-->
+
+<!--        Assumption 1-->
+        <div class="latex dashed-border">
+            <b>Assumption 1</b> (No extremely high-order interactions). Interactions higher than the $M$-th order have zero
+            effect:
+            $$
+            \forall S\in \{S \subseteq N: |S|\ge M+1\}, \quad I(S|\boldsymbol{x}) = 0.
+            $$
+        </div>
+
+        <ul>
+            <li>
+                Assumption 1 implies that the DNN <b>does not encode extremely complex interactions</b>
+            </li>
+            <li>
+                Empirical evidence:
+            </li>
+        </ul>
+
+        <img src="./static/img/fig3.png" alt="Image description" style="width: 850px;">
+
+        <br>
+
+<!--        Assumption 2-->
+        <div class="latex dashed-border">
+            <b>Assumption 2</b> (Monotonicity). The average network output is assumed to monotonically increase with
+            the size of the unmasked set $S$ of the input variables: 
+            $$
+            \forall m' \le m,  \ \bar{u}^{(m')} \le \bar{u}^{(m)}, \quad \bar{u}^{(m)} \overset{\text{def}}{=} \mathbb{E}_{|S|=m} [v(\boldsymbol{x}_S) - v(\boldsymbol{x}_\emptyset)]
+            $$
+
+
+        </div>
+
+        <ul>
+            <li>
+                Assumption 2 implies the DNN yields <b>higher classification confidence</b> on average when the input sample is <b>less masked/occluded</b>
+            </li>
+            <li>
+                Empirical evidence:
+            </li>
+        </ul>
+
+        <img src="./static/img/fig4.png" alt="Image description" style="width: 850px;">
+
+        <br>
+
+<!--        Assumption 3-->
+        <div class="latex dashed-border">
+            <b>Assumption 3</b> (Polynomial decrease of confidence). Given the average network output of samples with
+            $m$ unmasked input variables, $\bar{u}^{(m)}$ , we assume a lower bound for the average network output of
+            samples with $m' (m'\le m)$ unmasked input variables:
+            $$
+            \forall m' \le m, \bar{u}^{(m')} \ge \left( \frac{m'}{m} \right)^p \bar{u}^{(m)},
+            $$
+            where $p>0$ is a constant.
+        </div>
+
+        <ul>
+            <li>
+                Assumption 3 implies the model's classification confidence <b>does not significantly degrade on masked/occluded samples</b>
+            </li>
+            <li>
+                Empirical evidence:
+            </li>
+        </ul>
+
+        <img src="./static/img/fig5.png" alt="Image description" style="width: 450px;">
+
+        <br>
+        <br>
+
+        <div class="latex">
+            Let us define number of valid interaction primitives of $k$-th order as
+            $R^{(k)} \overset{\text{def}}{=} |{S\subseteq N : |S|=k, |I(S|\boldsymbol{x})|\ge \tau}|$.
+            We prove the following upper bound for $R^{(k)}$.
+        </div>
+
+        <img src="./static/img/fig6.png" alt="Image description" style="width: 800px;">
+
+        <div class="latex">
+            <b>Conclusion</b>: If positive interactions do not fully cancel with negative interactions
+            ($|\eta^{(k)}|$ is not extremely small), then the number of valid interaction primitives is much less than
+            the total number of potential interaction $2^n$. This implies interaction primitives are sparse.
+        </div>
+
+
+    </div>
+
+
+    <hr>
+
+    <h2>BibTeX</h2>
+    <pre><code>
+@inproceedings{
+    ren2024where,
+    title={Where We Have Arrived in Proving the Emergence of Sparse Interaction Primitives in {DNN}s},
+    author={Qihan Ren and Jiayang Gao and Wen Shen and Quanshi Zhang},
+    booktitle={The Twelfth International Conference on Learning Representations},
+    year={2024}
+}
+        </code></pre>
+
+    <hr>
+
+    <h2>Relevant Work</h2>
+    <div class="relevant-work">
+<!--        <a href="https://openreview.net/forum?id=3pWSL8My6B">Where We Have Arrived in Proving the Emergence of Sparse Interaction Primitives in DNNs. ICLR 2024.</a><br>-->
+    </div>
+</div>
+
+<footer>
+    &copy; 2024 Interaction Sparsity. All rights reserved.
+</footer>
+
+
+</body>
+
+</html>
